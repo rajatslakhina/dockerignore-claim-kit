@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="540" viewBox="0 0 1180 540">
+<rect width="1180" height="540" rx="12" fill="#0b1120"/>
+<defs><marker id="a" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#64748b"/></marker></defs>
+<text x="590.0" y="34" fill="#e2e8f0" font-family="Helvetica, Arial, sans-serif" font-size="20" text-anchor="middle" font-weight="bold">DockerignoreClaimKit</text>
+<text x="590.0" y="56" fill="#94a3b8" font-family="Helvetica, Arial, sans-serif" font-size="13" text-anchor="middle">what&#160;an&#160;answer&#160;says&#160;about&#160;.dockerignore,&#160;checked&#160;with&#160;Docker's&#160;own&#160;matching</text>
+<rect x="30" y="90" width="220" height="110" rx="10" fill="#111827" stroke="#a78bfa" stroke-width="1.5"/>
+<text x="140.0" y="114" fill="#a78bfa" font-family="Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">ProviderGatewayKit</text>
+<text x="140.0" y="136" fill="#cbd5e1" font-family="Menlo, Monaco, monospace" font-size="11" text-anchor="middle">sends&#160;the&#160;turn</text>
+<text x="140.0" y="153" fill="#cbd5e1" font-family="Menlo, Monaco, monospace" font-size="11" text-anchor="middle">answer&#160;text&#160;comes&#160;back</text>
+<rect x="300" y="80" width="260" height="170" rx="10" fill="#111827" stroke="#60a5fa" stroke-width="1.5"/>
+<text x="430.0" y="104" fill="#60a5fa" font-family="Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">DockerignoreClaimReader</text>
+<text x="430.0" y="126" fill="#cbd5e1" font-family="Menlo, Monaco, monospace" font-size="11" text-anchor="middle">prose&#160;sentences,&#160;code&#160;spans</text>
+<text x="430.0" y="143" fill="#cbd5e1" font-family="Menlo, Monaco, monospace" font-size="11" text-anchor="middle">.dockerignore&#160;blocks&#160;(root&#160;only)</text>
+<text x="430.0" y="160" fill="#cbd5e1" font-family="Menlo, Monaco, monospace" font-size="11" text-anchor="middle">path&#160;/&#160;scope&#160;/&#160;line&#160;claims</text>
+<text x="430.0" y="177" fill="#cbd5e1" font-family="Menlo, Monaco, monospace" font-size="11" text-anchor="middle">location,&#160;build-file&#160;claims</text>
+<text x="430.0" y="194" fill="#cbd5e1" font-family="Menlo, Monaco, monospace" font-size="11" text-anchor="middle">gated&#160;on&#160;'dockerignore'</text>
+<rect x="610" y="80" width="260" height="170" rx="10" fill="#111827" stroke="#34d399" stroke-width="1.5"/>
+<text x="740.0" y="104" fill="#34d399" font-family="Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">DockerignoreRules</text>
+<text x="740.0" y="126" fill="#cbd5e1" font-family="Menlo, Monaco, monospace" font-size="11" text-anchor="middle">ignorefile.ReadAll&#160;port</text>
+<text x="740.0" y="143" fill="#cbd5e1" font-family="Menlo, Monaco, monospace" font-size="11" text-anchor="middle">patternmatcher&#160;compile:</text>
+<text x="740.0" y="160" fill="#cbd5e1" font-family="Menlo, Monaco, monospace" font-size="11" text-anchor="middle">exact&#160;/&#160;prefix&#160;/&#160;suffix&#160;/&#160;regexp</text>
+<text x="740.0" y="177" fill="#cbd5e1" font-family="Menlo, Monaco, monospace" font-size="11" text-anchor="middle">last&#160;matching&#160;line&#160;decides</text>
+<text x="740.0" y="194" fill="#cbd5e1" font-family="Menlo, Monaco, monospace" font-size="11" text-anchor="middle">classic&#160;+&#160;BuildKit&#160;walk</text>
+<rect x="920" y="80" width="230" height="170" rx="10" fill="#111827" stroke="#f472b6" stroke-width="1.5"/>
+<text x="1035.0" y="104" fill="#f472b6" font-family="Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">DockerignoreEvaluator</text>
+<text x="1035.0" y="126" fill="#cbd5e1" font-family="Menlo, Monaco, monospace" font-size="11" text-anchor="middle">verdict&#160;per&#160;builder</text>
+<text x="1035.0" y="143" fill="#cbd5e1" font-family="Menlo, Monaco, monospace" font-size="11" text-anchor="middle">misreadings&#160;name&#160;the&#160;slip</text>
+<text x="1035.0" y="160" fill="#cbd5e1" font-family="Menlo, Monaco, monospace" font-size="11" text-anchor="middle">GitignoreClaimKit:&#160;how&#160;git</text>
+<text x="1035.0" y="177" fill="#cbd5e1" font-family="Menlo, Monaco, monospace" font-size="11" text-anchor="middle">would&#160;read&#160;the&#160;same&#160;lines</text>
+<text x="1035.0" y="194" fill="#cbd5e1" font-family="Menlo, Monaco, monospace" font-size="11" text-anchor="middle">fix:&#160;a&#160;line&#160;that&#160;works</text>
+<rect x="300" y="300" width="260" height="130" rx="10" fill="#111827" stroke="#fbbf24" stroke-width="1.5"/>
+<text x="430.0" y="324" fill="#fbbf24" font-family="Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">DockerignoreReport</text>
+<text x="430.0" y="346" fill="#cbd5e1" font-family="Menlo, Monaco, monospace" font-size="11" text-anchor="middle">verdict,&#160;summary</text>
+<text x="430.0" y="363" fill="#cbd5e1" font-family="Menlo, Monaco, monospace" font-size="11" text-anchor="middle">note&#160;for&#160;the&#160;reader</text>
+<text x="430.0" y="380" fill="#cbd5e1" font-family="Menlo, Monaco, monospace" font-size="11" text-anchor="middle">feedback&#160;for&#160;a&#160;re-prompt</text>
+<rect x="610" y="300" width="260" height="130" rx="10" fill="#111827" stroke="#fb923c" stroke-width="1.5"/>
+<text x="740.0" y="324" fill="#fb923c" font-family="Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">DockerignoreLedger&#160;(actor)</text>
+<text x="740.0" y="346" fill="#cbd5e1" font-family="Menlo, Monaco, monospace" font-size="11" text-anchor="middle">one&#160;per&#160;conversation</text>
+<text x="740.0" y="363" fill="#cbd5e1" font-family="Menlo, Monaco, monospace" font-size="11" text-anchor="middle">per-turn&#160;context&#160;gate</text>
+<text x="740.0" y="380" fill="#cbd5e1" font-family="Menlo, Monaco, monospace" font-size="11" text-anchor="middle">repeats&#160;of&#160;flagged&#160;claims</text>
+<rect x="920" y="300" width="230" height="130" rx="10" fill="#111827" stroke="#94a3b8" stroke-width="1.5"/>
+<text x="1035.0" y="324" fill="#94a3b8" font-family="Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">Scripts/parity.py</text>
+<text x="1035.0" y="346" fill="#cbd5e1" font-family="Menlo, Monaco, monospace" font-size="11" text-anchor="middle">69&#160;build&#160;contexts</text>
+<text x="1035.0" y="363" fill="#cbd5e1" font-family="Menlo, Monaco, monospace" font-size="11" text-anchor="middle">classic&#160;docker&#160;build</text>
+<text x="1035.0" y="380" fill="#cbd5e1" font-family="Menlo, Monaco, monospace" font-size="11" text-anchor="middle">312&#160;paths,&#160;all&#160;matched</text>
+<rect x="30" y="300" width="220" height="130" rx="10" fill="#111827" stroke="#a78bfa" stroke-width="1.5"/>
+<text x="140.0" y="324" fill="#a78bfa" font-family="Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">ai-chat-app</text>
+<text x="140.0" y="346" fill="#cbd5e1" font-family="Menlo, Monaco, monospace" font-size="11" text-anchor="middle">dockerignoreCheck&#160;stage</text>
+<text x="140.0" y="363" fill="#cbd5e1" font-family="Menlo, Monaco, monospace" font-size="11" text-anchor="middle">note&#160;under&#160;the&#160;answer</text>
+<line x1="250" y1="145" x2="298" y2="145" stroke="#64748b" stroke-width="1.5" marker-end="url(#a)"/>
+<line x1="560" y1="165" x2="608" y2="165" stroke="#64748b" stroke-width="1.5" marker-end="url(#a)"/>
+<line x1="870" y1="165" x2="918" y2="165" stroke="#64748b" stroke-width="1.5" marker-end="url(#a)"/>
+<line x1="1035" y1="250" x2="1035" y2="298" stroke="#64748b" stroke-width="1.5" marker-end="url(#a)"/>
+<line x1="918" y1="365" x2="872" y2="365" stroke="#64748b" stroke-width="1.5" marker-end="url(#a)"/>
+<line x1="608" y1="365" x2="562" y2="365" stroke="#64748b" stroke-width="1.5" marker-end="url(#a)"/>
+<line x1="298" y1="365" x2="252" y2="365" stroke="#64748b" stroke-width="1.5" marker-end="url(#a)"/>
+<text x="590.0" y="480" fill="#94a3b8" font-family="Helvetica, Arial, sans-serif" font-size="12" text-anchor="middle">Wrong&#160;claims&#160;are&#160;re-judged&#160;under&#160;misreadings:&#160;trailing&#160;comments,&#160;gitignore&#160;depth,&#160;git's&#160;re-include&#160;rule,</text>
+<text x="590.0" y="500" fill="#94a3b8" font-family="Helvetica, Arial, sans-serif" font-size="12" text-anchor="middle">a&#160;star&#160;across&#160;'/',&#160;[!a]&#160;as&#160;negation,&#160;first&#160;match&#160;wins,&#160;case&#160;folding;&#160;then&#160;the&#160;builders'&#160;directory&#160;walk.</text>
+</svg>

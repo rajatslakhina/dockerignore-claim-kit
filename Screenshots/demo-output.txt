@@ -1,0 +1,74 @@
+DockerignoreClaimKit demo: what answers say about .dockerignore, checked with Docker's own matching rules
+
+== 1. A .dockerignore written like a .gitignore
+-- answer: wrong (3 claims checked, 0 hold, 3 wrong)
+   WRONG line: `.env   # local secrets` does not exclude `.env`. Docker reads `#` as a comment only at the start of a line, so the comment is part of the pattern. Put `.env` on its own line and the comment on the line above.
+   WRONG path: `packages/api/node_modules/react/index.js` is sent: no line matches it, so the claim that it is left out is wrong. Docker matches every pattern from the root of the build context; unlike .gitignore, a pattern with no slash does not match in subdirectories. `**/node_modules` does what the answer expects.
+   WRONG scope: `*.log` does not match at any depth (`sub/x.log` is not matched). Docker matches every pattern from the root of the build context; unlike .gitignore, a pattern with no slash does not match in subdirectories. `**/*.log` does what the answer expects.
+   left out  node_modules/react/index.js <- `node_modules` (line 1) via skipped node_modules/
+   sent      packages/api/node_modules/react/index.js
+   sent      logs/app.log
+   sent      .env
+-- rewrite: verified (2 claims checked, 2 hold)
+   ok    path: Right: `packages/api/node_modules/react/index.js` is left out: `**/node_modules` excludes its directory `packages/api/node_modules/`.
+   ok    path: Right: `logs/app.log` is left out by `**/*.log`.
+
+== 2. The same lines, read by git and by Docker
+   lines: node_modules, *.log, logs, !logs/keep.log
+   as .gitignore: ignored   as .dockerignore: sent      app/node_modules/x.js
+   as .gitignore: ignored   as .dockerignore: sent      app/debug.log
+   as .gitignore: ignored   as .dockerignore: sent      logs/keep.log
+-- answer: wrong (1 claim checked, 0 hold, 1 wrong)
+   WRONG path: `logs/keep.log` is sent: `!logs/keep.log` brings it back, so the claim that it is left out is wrong. Unlike git, Docker can bring back a path below an excluded directory when an `!` line names it.
+
+== 3. A wildcard exception inside an excluded folder
+-- builder unknown: caution (1 claim checked, 0 hold, 1 to check)
+   check path: That `node_modules/pkg/keep.txt` is sent with the build context holds only with BuildKit; the classic builder skips the excluded directory above it and gives the opposite result.
+-- classic builder: wrong (1 claim checked, 0 hold, 1 wrong)
+   WRONG path: `node_modules/pkg/keep.txt` is left out: `node_modules` excludes its directory `node_modules/`, so the claim that it is sent is wrong. The classic builder searches an excluded directory only for `!` lines whose text starts with that directory's path, so a wildcard exception cannot reach inside it. Add `!node_modules/pkg/keep.txt`, which names the path literally, so the builder searches the directory.
+-- BuildKit: verified (1 claim checked, 1 hold)
+   ok    path: Right: `node_modules/pkg/keep.txt` is sent: `!**/keep.txt` brings it back.
+   left out  node_modules/pkg/keep.txt <- `node_modules` (line 1) via skipped node_modules/
+   sent      node_modules/pkg/keep.txt <- `!**/keep.txt` (line 2)
+   sent      node_modules/pkg/keep.txt <- `!node_modules/pkg/keep.txt` (line 2)
+
+== 4. An allow list
+-- answer: verified (2 claims checked, 2 hold)
+   ok    path: Right: `src/index.ts` is sent: `!src` brings it back.
+   ok    path: Right: `README.md` is left out by `*`.
+   sent      src/index.ts <- `!src` (line 2)
+   sent      src/lib/util.ts <- `!src` (line 2)
+   sent      package.json <- `!package.json` (line 3)
+   left out  README.md <- `*` (line 1)
+   left out  Dockerfile <- `*` (line 1)
+
+== 5. Where the file lives, and listing the Dockerfile
+-- answer: wrong (2 claims checked, 0 hold, 2 wrong)
+   WRONG location: A .dockerignore in a subdirectory has no effect. Docker reads only the .dockerignore at the root of the build context (BuildKit also reads `<Dockerfile name>.dockerignore` beside the Dockerfile); put the patterns there, with the subdirectory's path in front.
+   WRONG buildFiles: Listing `Dockerfile` in .dockerignore does not break the build. Docker still reads the Dockerfile and .dockerignore; listing them only keeps them out of what `COPY` and `ADD` can see.
+-- rewrite: verified (2 claims checked, 2 hold)
+   ok    location: Right: Docker reads only the .dockerignore at the root of the build context.
+   ok    buildFiles: Right: Listing `Dockerfile` in .dockerignore does not break the build.
+   left out  Dockerfile <- `Dockerfile` (line 1)
+
+== 6. Shell-glob habits: [!a], letter case, a star across folders
+-- answer: wrong (3 claims checked, 0 hold, 3 wrong)
+   WRONG path: `b.txt` is sent: no line matches it, so the claim that it is left out is wrong. In .dockerignore `!` inside brackets is an ordinary character; `[^...]` negates. `[^a]*.txt` does what the answer expects.
+   WRONG path: `readme.md` is sent: no line matches it, so the claim that it is left out is wrong. Docker compares names exactly, so letter case matters even on macOS and Windows.
+   WRONG path: `doc/server/arch.txt` is sent: no line matches it, so the claim that it is left out is wrong. `*` does not match `/`; `**` does. `doc/**/*.txt` does what the answer expects.
+   left out  !x.txt <- `[!a]*.txt` (line 1)
+   left out  a.txt <- `[!a]*.txt` (line 1)
+
+== 7. A line Docker rejects
+-- answer: unchecked (1 claim checked, 0 hold, 1 unchecked)
+   skip  path: Not checked: Docker rejects line 1 (`[a`), so `docker build` stops before it sends the context.
+   line 1 `[a`: malformed
+
+== 8. A conversation: the same mistake after a correction
+-- turn 1: wrong (1 claim checked, 0 hold, 1 wrong)
+   WRONG path: `packages/web/node_modules/vite/index.js` is sent: no line matches it, so the claim that it is left out is wrong. Docker matches every pattern from the root of the build context; unlike .gitignore, a pattern with no slash does not match in subdirectories. `**/node_modules` does what the answer expects.
+   feedback sent: 3 lines
+-- turn 2, about a regex: noClaims (no claims about .dockerignore rules)
+-- turn 3: wrong (1 claim checked, 0 hold, 1 wrong, 1 repeated)
+   WRONG path: `packages/web/node_modules/vite/index.js` is sent: no line matches it, so the claim that it is left out is wrong. Docker matches every pattern from the root of the build context; unlike .gitignore, a pattern with no slash does not match in subdirectories. `**/node_modules` does what the answer expects. [repeated]
+   ledger: 3 reviews, 2 claims, 2 flagged, 1 repeated
