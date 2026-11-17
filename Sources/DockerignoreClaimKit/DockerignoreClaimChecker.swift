@@ -55,7 +55,7 @@ public actor DockerignoreLedger {
     public func review(_ text: String, context: String = "") -> DockerignoreReport {
         isAboutDockerignore = DockerignoreClaimReader.isAboutDockerignore(context)
             || DockerignoreClaimReader.isAboutDockerignore(text)
-        let all = checker.reader.claims(in: text, assumingDockerContext: true)
+        let all = checker.reader.claims(in: text, context: context, assumingDockerContext: true)
         let claims = isAboutDockerignore ? all : all.filter { !$0.restsOnSentence || flaggedKeys.contains($0.key) }
         var findings = checker.report(claims).findings
         var keys: Set<String> = []

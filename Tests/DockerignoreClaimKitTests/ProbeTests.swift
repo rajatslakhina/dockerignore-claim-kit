@@ -63,6 +63,24 @@ struct ProbeTests {
         #expect(report.findings.allSatisfy { $0.severity == .wrong })
     }
 
+    @Test("a question about .gitignore keeps a sentence that names neither file out, even if it names .dockerignore")
+    func questionNamesBothFiles() {
+        let question = "For my .gitignore, not the .dockerignore: does *.log cover nested logs?"
+        #expect(DockerignoreClaimChecker().check("Yes, `*.log` matches `logs/a.log`.", context: question).verdict
+            == .noClaims)
+        #expect(DockerignoreClaimChecker().check("In the build context, `*.log` excludes `logs/a.log`.",
+                                                 context: question).verdict == .wrong)
+    }
+
+    @Test("a .dockerignore per service folder is right only when that folder is the build context")
+    func nestedFileIsACaveat() {
+        let answer = "Put a `.dockerignore` in each service folder, for example `services/api/.dockerignore`."
+        let report = DockerignoreClaimChecker().check(answer)
+        #expect(report.verdict == .caution)
+        #expect(report.flagged.first?.outcome == .caveat(.onlyIfBuildContext))
+        #expect(DockerignoreClaimChecker(policy: .lenient).check(answer).verdict == .verified)
+    }
+
     @Test("a later turn that names no ignore file stays quiet unless it repeats a flagged claim")
     func laterTurns() async {
         let ledger = DockerignoreLedger()
@@ -117,7 +135,6 @@ struct ProbeTests {
          .rootRelative),
         ("In `.dockerignore`, `*.log` matches log files at any depth.", .rootRelative),
         ("```dockerignore\n.env   # local secrets\n```", .trailingComment),
-        ("Put a `.dockerignore` in each service folder, for example `services/api/.dockerignore`.", .nestedIgnoreFile),
         ("Don't list the `Dockerfile` in `.dockerignore`, or `docker build` fails because it can't find it.",
          .buildFilesStillRead),
         ("With this `.dockerignore`:\n\n```\nlogs\n!logs/keep.log\n```\n\n`logs/keep.log` stays excluded.",

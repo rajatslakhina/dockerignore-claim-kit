@@ -25,9 +25,9 @@ struct DockerignoreEvaluator {
     func judge(_ claim: DockerignoreClaim) -> DockerignoreFinding {
         switch claim.kind {
         case .location:
-            let outcome: DockerignoreFinding.Outcome = claim.assertion == .nestedFileApplies
-                ? .wrong(.nestedIgnoreFile) : .exact
-            return DockerignoreFinding(claim: claim, outcome: outcome)
+            // Right when that folder is the build context, which the answer rarely says.
+            let caveat = claim.assertion == .nestedFileApplies && policy.reportsCaveats
+            return DockerignoreFinding(claim: claim, outcome: caveat ? .caveat(.onlyIfBuildContext) : .exact)
         case .buildFiles:
             let outcome: DockerignoreFinding.Outcome = claim.assertion == .buildFails
                 ? .wrong(.buildFilesStillRead) : .exact

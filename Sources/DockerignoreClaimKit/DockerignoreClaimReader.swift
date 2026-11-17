@@ -17,33 +17,35 @@ public struct DockerignoreClaimReader: Sendable {
     /// The claims in an answer. `context` is other text from the conversation (the question it answers); when it,
     /// or the answer, names .dockerignore, a sentence's own patterns are read as .dockerignore rules.
     public func claims(in text: String, context: String = "") -> [DockerignoreClaim] {
-        claims(in: text, assumingDockerContext: Self.isAboutDockerignore(context))
+        claims(in: text, context: context, assumingDockerContext: Self.isAboutDockerignore(context))
     }
 
-    func claims(in text: String, assumingDockerContext: Bool) -> [DockerignoreClaim] {
-        let found = allClaims(in: text)
+    func claims(in text: String, context: String, assumingDockerContext: Bool) -> [DockerignoreClaim] {
+        let found = allClaims(in: text, context: context)
         guard !assumingDockerContext, !Self.isAboutDockerignore(text) else { return found }
         return found.filter { !$0.restsOnSentence }
     }
 
-    func allClaims(in text: String) -> [DockerignoreClaim] {
+    /// `context` counts when deciding whether the conversation also talks about another ignore file: an answer to
+    /// "does `*.log` cover nested logs in my .gitignore?" is about .gitignore even if it never says so.
+    func allClaims(in text: String, context: String = "") -> [DockerignoreClaim] {
         let blocks = AnswerBlocks.split(text)
         let ruleBlocks = RuleBlocks.find(in: blocks)
-        let mentionsOtherFiles = RuleBlocks.otherFiles.contains { text.folded.contains($0) }
+        let mentionsOtherFiles = RuleBlocks.otherFiles.contains { (text + "\n" + context).folded.contains($0) }
         var claims: [DockerignoreClaim] = []
         if checksLines { claims += ruleBlocks.flatMap(LineReader.claims) }
         for (position, block) in blocks.enumerated() where block.kind == .prose {
-            let context = context(at: position, ruleBlocks)
+            let reading = self.context(at: position, ruleBlocks)
             for sentence in Sentences.split(block.lines) where Self.isOurs(sentence, mentionsOtherFiles) {
                 claims += StatementReader.claims(in: sentence)
-                claims += SentenceReader(context: context).claims(in: sentence)
+                claims += SentenceReader(context: reading).claims(in: sentence)
             }
         }
         return Self.deduplicated(claims)
     }
 
-    /// In an answer that also talks about .gitignore (or another ignore file), only sentences that name Docker
-    /// are read: "`*.log` matches `logs/a.log`" holds for .gitignore and not for .dockerignore.
+    /// In an answer (or a question) that also talks about .gitignore or another ignore file, only sentences that
+    /// name Docker are read: "`*.log` matches `logs/a.log`" holds for .gitignore and not for .dockerignore.
     static func isOurs(_ sentence: String, _ mentionsOtherFiles: Bool) -> Bool {
         let folded = sentence.folded
         if folded.contains("dockerignore") { return true }

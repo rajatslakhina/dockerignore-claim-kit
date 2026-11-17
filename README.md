@@ -55,7 +55,6 @@ mistake, and comes with a fix where there is an obvious one.
 | `letterCase` | names compared without case; Docker compares them exactly, even on macOS | |
 | `skippedDirectory` | a wildcard exception the classic builder never sees | `!` plus the path |
 | `gitignoreRules` | anything else that holds under git's reading of the same lines | |
-| `nestedIgnoreFile` | a `.dockerignore` in a subdirectory read as applying there | |
 | `buildFilesStillRead` | listing the `Dockerfile` or `.dockerignore` read as breaking the build | |
 
 ### Two builders
@@ -65,6 +64,13 @@ when an excluded directory is searched for exceptions. The classic builder searc
 text starts with the directory's path, so `!node_modules/pkg/keep.txt` works and `!**/keep.txt` does not. BuildKit
 (as `tonistiigi/fsutil` reads) searches every excluded directory as soon as any exception holds a wildcard. A claim
 that holds under one and not the other is a caveat unless the policy names the builder.
+
+### What the answer does not say
+
+Two things decide some claims and are rarely in the answer: the builder (above), and the build context. "Put a
+`.dockerignore` in each service folder" is right when each service is built with its own folder as the context
+(`docker build services/api`, a compose `build:` pointing at it) and wrong when the build runs from the repository
+root. Such a claim is a caveat, never a verdict.
 
 ## Install
 
@@ -161,9 +167,10 @@ habits (`[!a]`, letter case, `*` across folders), a line Docker rejects, and a c
 ![tests](Screenshots/tests.svg)
 
 - `swift build`: 0 warnings, 0 errors (Swift 6.4.2, language mode 6).
-- `swift test --enable-code-coverage --no-parallel`: 34 tests in 7 suites (160 parameterized cases), 0 failures.
-- `llvm-cov report`: **100.00% of lines (1550) and functions (399) on all 24 library files**; regions 98.00%
-  (1028 of 1049). Per-file numbers are in [Screenshots/coverage.txt](Screenshots/coverage.txt).
+- `swift test --enable-code-coverage --no-parallel`: 36 tests in 7 suites (159 parameterized cases), 0 failures.
+  Numbers here are for 1.0.1.
+- `llvm-cov report`: **100.00% of lines (1555) and functions (400) on all 24 library files**; regions 98.00%
+  (1030 of 1051). Per-file numbers are in [Screenshots/coverage.txt](Screenshots/coverage.txt).
 - `swiftlint lint --strict`: 0 violations in 29 files, with the series' `.swiftlint.yml` unchanged.
 - **Parity with Docker.** `Scripts/parity.py` builds 69 throwaway build contexts (312 paths), runs the classic
   `docker build` on each with `FROM scratch` and `COPY . /ctx/`, reads which files reached the image, and writes
@@ -174,9 +181,10 @@ habits (`[!a]`, letter case, `*` across folders), a line Docker rejects, and a c
   Docker rejects (`[a`, `!`, a trailing `\`). Turning the parity check upside down fails 303 expectations.
 - **Mutation checks**, each killed by `swift test`'s exit status: the classic builder never skipping a directory
   (10 failed expectations), and slashless patterns matching at any depth (37).
-- **Probes before tagging**: 14 correct answers stay unflagged, 10 wrong ones are caught with the right slip, 3
+- **Probes before tagging**: 14 correct answers stay unflagged, 9 wrong ones are caught with the right slip, 3
   `.gitignore` answers and 16 other-domain sentences make no claim, an answer showing both files is judged only on
-  its `.dockerignore`, and a later regex turn in the same conversation stays quiet.
+  its `.dockerignore`, a question about `.gitignore` keeps a sentence that names neither file out, a `.dockerignore`
+  per service folder is a caveat, and a later regex turn in the same conversation stays quiet.
 - BuildKit's directory walk is taken from `tonistiigi/fsutil`'s source (`filter.go`), not run: buildx is not
   installed where this was built.
 
@@ -188,9 +196,18 @@ habits (`[!a]`, letter case, `*` across folders), a line Docker rejects, and a c
 - A clause is read only up to "if", "unless", "when" or "otherwise", and advice ("should", "to exclude", "can")
   is not a claim.
 - The checker answers what reaches the build context. Files a `RUN` step creates, multi-stage `COPY --from`, and
-  `<Dockerfile>.dockerignore` (BuildKit's per-Dockerfile file) are not modelled; a `.dockerignore` in a
-  subdirectory is assumed not to be the context root.
+  `<Dockerfile>.dockerignore` (BuildKit's per-Dockerfile file) are not modelled. Paths are read relative to the
+  `.dockerignore` the answer shows, taken to be at the root of the build context.
 - `Dockerfile` is taken to be the default name at the root of the context.
+
+## Changes
+
+- **1.0.1.** A `.dockerignore` per service folder is a caveat (`onlyIfBuildContext`), not a wrong claim: it is right
+  when that folder is the build context, which the answer rarely says. The check for another ignore file in the
+  conversation now reads the question passed as `context` too, so "Yes, `*.log` matches `logs/a.log`" answering
+  a `.gitignore` question makes no claim. The `nestedIgnoreFile` slip is gone. `letterCase` no longer mentions
+  Windows (only macOS was checked).
+- **1.0.0.** First release.
 
 ## Part of a series
 

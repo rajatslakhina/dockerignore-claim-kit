@@ -12,6 +12,9 @@ public struct DockerignoreFinding: Sendable, Hashable {
     public enum Caveat: Sendable, Hashable {
         /// Holds only with this builder: the other one searches (or skips) an excluded directory differently.
         case dependsOnBuilder(holdsWith: DockerBuilder)
+        /// A .dockerignore in a subdirectory applies only when that folder is the build context
+        /// (`docker build services/api`); building from above it, Docker reads only the context root's file.
+        case onlyIfBuildContext
     }
 
     /// A recognisable mistake behind a wrong claim.
@@ -36,9 +39,6 @@ public struct DockerignoreFinding: Sendable, Hashable {
         case skippedDirectory
         /// Read with .gitignore's rules, which differ from Docker's here.
         case gitignoreRules
-        /// A .dockerignore in a subdirectory read as applying there: Docker reads only the one at the root of
-        /// the build context.
-        case nestedIgnoreFile
         /// Listing the Dockerfile or .dockerignore read as breaking the build: Docker still reads both, and only
         /// leaves them out of what `COPY` and `ADD` can see.
         case buildFilesStillRead

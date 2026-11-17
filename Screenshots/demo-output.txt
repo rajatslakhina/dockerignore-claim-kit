@@ -43,8 +43,8 @@ DockerignoreClaimKit demo: what answers say about .dockerignore, checked with Do
    left out  Dockerfile <- `*` (line 1)
 
 == 5. Where the file lives, and listing the Dockerfile
--- answer: wrong (2 claims checked, 0 hold, 2 wrong)
-   WRONG location: A .dockerignore in a subdirectory has no effect. Docker reads only the .dockerignore at the root of the build context (BuildKit also reads `<Dockerfile name>.dockerignore` beside the Dockerfile); put the patterns there, with the subdirectory's path in front.
+-- answer: wrong (2 claims checked, 0 hold, 1 to check, 1 wrong)
+   check location: A .dockerignore in a subdirectory applies only when that folder is the build context (`docker build services/api`, or a compose `build:` pointing at it); building from above it, Docker reads only the .dockerignore at the root of the context.
    WRONG buildFiles: Listing `Dockerfile` in .dockerignore does not break the build. Docker still reads the Dockerfile and .dockerignore; listing them only keeps them out of what `COPY` and `ADD` can see.
 -- rewrite: verified (2 claims checked, 2 hold)
    ok    location: Right: Docker reads only the .dockerignore at the root of the build context.
@@ -54,7 +54,7 @@ DockerignoreClaimKit demo: what answers say about .dockerignore, checked with Do
 == 6. Shell-glob habits: [!a], letter case, a star across folders
 -- answer: wrong (3 claims checked, 0 hold, 3 wrong)
    WRONG path: `b.txt` is sent: no line matches it, so the claim that it is left out is wrong. In .dockerignore `!` inside brackets is an ordinary character; `[^...]` negates. `[^a]*.txt` does what the answer expects.
-   WRONG path: `readme.md` is sent: no line matches it, so the claim that it is left out is wrong. Docker compares names exactly, so letter case matters even on macOS and Windows.
+   WRONG path: `readme.md` is sent: no line matches it, so the claim that it is left out is wrong. Docker compares names exactly, so letter case matters even on macOS.
    WRONG path: `doc/server/arch.txt` is sent: no line matches it, so the claim that it is left out is wrong. `*` does not match `/`; `**` does. `doc/**/*.txt` does what the answer expects.
    left out  !x.txt <- `[!a]*.txt` (line 1)
    left out  a.txt <- `[!a]*.txt` (line 1)

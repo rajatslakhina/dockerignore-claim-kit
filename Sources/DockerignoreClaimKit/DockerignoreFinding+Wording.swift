@@ -9,6 +9,10 @@ extension DockerignoreFinding {
             return "That \(statement) holds only with \(Self.name(holdsWith)); \(Self.name(other)) "
                 + (holdsWith == .classic ? "searches" : "skips")
                 + " the excluded directory above it and gives the opposite result."
+        case .caveat(.onlyIfBuildContext):
+            return "A .dockerignore in a subdirectory applies only when that folder is the build context (`docker "
+                + "build services/api`, or a compose `build:` pointing at it); building from above it, Docker reads "
+                + "only the .dockerignore at the root of the context."
         case .unchecked(let reason):
             return "Not checked: \(reason)."
         case .wrong(let slip):
@@ -71,7 +75,7 @@ extension DockerignoreFinding {
         case .line:
             return "`\(claim.subject)` does not exclude " + (example.map { "`\($0)`." } ?? "what it was written for.")
         case .location:
-            return "A .dockerignore in a subdirectory has no effect."
+            return "A .dockerignore in a subdirectory has no effect unless that folder is the build context."
         case .buildFiles:
             return "Listing `\(claim.subject)` in .dockerignore does not break the build."
         }
@@ -87,13 +91,10 @@ extension DockerignoreFinding {
         .starStopsAtSlash: "`*` does not match `/`; `**` does.",
         .bangInBracket: "In .dockerignore `!` inside brackets is an ordinary character; `[^...]` negates.",
         .lastMatchWins: "When several lines match a path, the last one decides.",
-        .letterCase: "Docker compares names exactly, so letter case matters even on macOS and Windows.",
+        .letterCase: "Docker compares names exactly, so letter case matters even on macOS.",
         .skippedDirectory: "The classic builder searches an excluded directory only for `!` lines whose text "
             + "starts with that directory's path, so a wildcard exception cannot reach inside it.",
         .gitignoreRules: "That is how .gitignore reads this file; Docker's rules differ.",
-        .nestedIgnoreFile: "Docker reads only the .dockerignore at the root of the build context (BuildKit also "
-            + "reads `<Dockerfile name>.dockerignore` beside the Dockerfile); put the patterns there, with the "
-            + "subdirectory's path in front.",
         .buildFilesStillRead: "Docker still reads the Dockerfile and .dockerignore; listing them only keeps them "
             + "out of what `COPY` and `ADD` can see."
     ]

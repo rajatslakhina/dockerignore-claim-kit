@@ -86,7 +86,7 @@ struct EvaluatorTests {
         let odd = judge(DockerignoreClaim(kind: .line, subject: "[^a] # x", assertion: .takesEffect, sentence: "s"))
         #expect(odd.example == nil)
         let cases: [(DockerignoreClaim.Kind, DockerignoreClaim.Assertion, DockerignoreFinding.Outcome)] = [
-            (.location, .nestedFileApplies, .wrong(.nestedIgnoreFile)), (.location, .nestedFileIgnored, .exact),
+            (.location, .nestedFileApplies, .caveat(.onlyIfBuildContext)), (.location, .nestedFileIgnored, .exact),
             (.buildFiles, .buildFails, .wrong(.buildFilesStillRead)), (.buildFiles, .buildWorks, .exact)
         ]
         for (kind, assertion, outcome) in cases {

@@ -81,7 +81,12 @@ struct ReportTests {
              "`x` does not exclude `x`. Docker reads `#` as a comment only at the start of a line, so the comment is "
                 + "part of the pattern. Put `x` on its own line and the comment on the line above."),
             (finding(.line, .takesEffect, .wrong(nil)), "`x` does not exclude what it was written for."),
-            (finding(.location, .nestedFileApplies, .wrong(nil)), "A .dockerignore in a subdirectory has no effect.")
+            (finding(.location, .nestedFileApplies, .wrong(nil)),
+             "A .dockerignore in a subdirectory has no effect unless that folder is the build context."),
+            (finding(.location, .nestedFileApplies, .caveat(.onlyIfBuildContext)),
+             "A .dockerignore in a subdirectory applies only when that folder is the build context (`docker build "
+                + "services/api`, or a compose `build:` pointing at it); building from above it, Docker reads only "
+                + "the .dockerignore at the root of the context.")
         ]
         for (finding, expected) in rows {
             #expect(finding.explanation == expected)
